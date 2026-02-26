@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+
+{% block title %}Email History - Mailing Web App{% endblock %}
+
+{% block content %}
+<div class="container-main py-12">
+    <div class="mb-6 flex justify-between items-center">
+        <div>
+            <h1 class="text-4xl font-bold text-gray-900">Email History</h1>
+            <p class="text-gray-600 mt-2">View all your sent emails</p>
+        </div>
+        <a href="{% url 'mailapp:send_email' %}" class="btn-primary">
+            Send New Email
+        </a>
+    </div>
+
+    {% if emails %}
+        <div class="space-y-4">
+            {% for email in emails %}
+                <div class="card hover:shadow-xl transition-shadow">
+                    <div class="flex justify-between items-start mb-3">
+                        <div class="flex-1">
+                            <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ email.subject }}</h3>
+                            <p class="text-sm text-gray-600">
+                                <span class="font-semibold">To:</span> {{ email.recipient }}
+                            </p>
+                        </div>
+                        <span class="text-sm text-gray-500">
+                            {{ email.sent_at|date:"M d, Y - g:i A" )}
+                        </span>
+                    </div>
+                    <div class="bg-gray-50 rounded-lg p-4 mt-3">
+                        <p class="text-gray-700 whitespace-pre-wrap">{{ email.message|truncatewords:50 }}</p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card text-center py-16">
+            <div class="text-6xl mb-4">📭</div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-2">No emails sent yet</h3>
+            <p class="text-gray-600 mb-6">Start by composing your first email</p>
+            <a href="{% url 'mailapp:send_email' %}" class="btn-primary inline-block">
+                Compose Email
+            </a>
+        </div>
+    {% endif %}
+
+    {% if emails.count > 0 %}
+        <div class="mt-8 text-center text-gray-600">
+            Total emails sent: <span class="font-semibold">{{ emails.count }}</span>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Mailing Web App{% endblock %}
+
+{% block content %}
+<div class="container-main py-12">
+    <div class="mb-8">
+        <h1 class="text-4xl font-bold text-gray-900">Dashboard</h1>
+        <p class="text-gray-600 mt-2">Welcome back, {{ user.username }}!</p>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Send Email Card -->
+        <a href="{% url 'mailapp:send_email' %}" class="card group hover:border-blue-500 border-2 border-transparent cursor-pointer">
+            <div class="text-5xl mb-4">✉️</div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Send Email</h3>
+            <p class="text-gray-600">Compose and send a new email</p>
+        </a>
+
+        <!-- Email History Card -->
+        <a href="{% url 'mailapp:email_history' %}" class="card group hover:border-blue-500 border-2 border-transparent cursor-pointer">
+            <div class="text-5xl mb-4">📨</div>
+            <h3 class="text-2xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Email History</h3>
+            <p class="text-gray-600">View all your sent emails</p>
+        </a>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="mt-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Stats</h2>
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="card bg-gradient-to-br from-blue-50 to-blue-100">
+                <p class="text-sm text-gray-600 mb-1">Total Emails Sent</p>
+                <p class="text-4xl font-bold text-blue-600">{{ user.emails.count }}</p>
+            </div>
+            <div class="card bg-gradient-to-br from-green-50 to-green-100">
+                <p class="text-sm text-gray-600 mb-1">This Month</p>
+                <p class="text-4xl font-bold text-green-600">0</p>
+            </div>
+            <div class="card bg-gradient-to-br from-purple-50 to-purple-100">
+                <p class="text-sm text-gray-600 mb-1">Account Status</p>
+                <p class="text-2xl font-bold text-purple-600">Active</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

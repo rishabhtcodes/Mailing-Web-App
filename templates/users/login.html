@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}Login - Mailing Web App{% endblock %}
+
+{% block content %}
+<div class="container-main py-12">
+    <div class="max-w-md mx-auto">
+        <div class="card">
+            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Login</h2>
+            
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.username.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <p class="text-red-600 text-sm mt-1">{{ form.password.errors.0 }}</p>
+                    {% endif %}
+                </div>
+
+                {% if form.non_field_errors %}
+                    <div class="bg-red-100 text-red-800 p-3 rounded-lg">
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="btn-primary w-full">Login</button>
+            </form>
+
+            <p class="text-center text-gray-600 mt-6">
+                Don't have an account? 
+                <a href="{% url 'users:register' %}" class="text-blue-600 hover:underline font-semibold">Register here</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<style>
+    input[type="text"],
+    input[type="password"] {
+        @apply input-field;
+    }
+</style>
+{% endblock %}
