@@ -1,0 +1,25 @@
+{
+  "name": "mailing-web-app",
+  "version": "1.0.0",
+  "description": "A Django-powered mailing web application with Tailwind CSS",
+  "main": "index.js",
+  "scripts": {
+    "tailwind:watch": "tailwindcss -i ./static/src/input.css -o ./static/css/output.css --watch",
+    "tailwind:build": "tailwindcss -i ./static/src/input.css -o ./static/css/output.css",
+    "build": "npm run tailwind:build",
+    "dev": "npm run tailwind:watch"
+  },
+  "keywords": [
+    "django",
+    "mailing",
+    "tailwind",
+    "mongodb"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "tailwindcss": "^3.4.1",
+    "postcss": "^8.4.33",
+    "autoprefixer": "^10.4.17"
+  }
+}
