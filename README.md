@@ -74,6 +74,7 @@ cp .env.example .env
 Update the following in `.env`:
 - `SECRET_KEY`: Generate a new secret key for production
 - `DEBUG`: Set to `False` in production
+- `USE_MONGO`: Set to `True` to use MongoDB, or `False` to use SQLite
 - `MONGO_URI`: Your MongoDB connection string
 - `EMAIL_HOST_USER`: Your Gmail address
 - `EMAIL_HOST_PASSWORD`: Gmail App Password ([How to create](https://support.google.com/accounts/answer/185833))
