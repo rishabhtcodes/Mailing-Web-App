@@ -1,9 +1,9 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.conf import settings
 
 
 class EmailHistory(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='emails')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='emails')
     recipient = models.EmailField(max_length=254)
     subject = models.CharField(max_length=255)
     message = models.TextField()
