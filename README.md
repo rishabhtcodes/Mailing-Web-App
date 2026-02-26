@@ -34,4 +34,3 @@ See `.env.example` for a complete list.
 
 - `config/`: Django project settings and URLs.
 - `manage.py`: Django management entry point.
-
