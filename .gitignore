@@ -22,7 +22,9 @@ staticfiles/
 
 # Environment variables
 .env
-.env.*
+.env.local
+.env.*.local
+!.env.example
 
 # OS files
 .DS_Store
