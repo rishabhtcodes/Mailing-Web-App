@@ -36,6 +36,35 @@ If you are cloning this repository:
 5. Run migrations: `python manage.py migrate`.
 6. Start the server: `python manage.py runserver`.
 
+## Start the Project (Commands)
+
+🧪 **Activate venv**
+```powershell
+.
+\.venv\Scripts\Activate.ps1
+```
+
+📦 **Install Python deps**
+```bash
+pip install -r requirements.txt
+```
+
+🎨 **Build Tailwind CSS**
+```bash
+npm install
+npm run tailwind:build
+```
+
+🗄️ **Run migrations**
+```bash
+python manage.py migrate
+```
+
+🚀 **Start server**
+```bash
+python manage.py runserver
+```
+
 ## Setup Instructions
 
 ### 1. Clone the Repository
