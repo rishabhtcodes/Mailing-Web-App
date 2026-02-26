@@ -1,8 +1,43 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import login, authenticate, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django import forms
+from .models import CustomUser
+
+
+class EmailUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, help_text='Required. Enter a valid email address.')
+    
+    class Meta:
+        model = CustomUser
+        fields = ('email', 'password1', 'password2')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['password1'].widget.attrs['class'] = 'input-field'
+        self.fields['password2'].widget.attrs['class'] = 'input-field'
+        self.fields['email'].widget.attrs['class'] = 'input-field'
+    
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError('This email is already registered.')
+        return email
+    
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.username = self.cleaned_data['email'].split('@')[0]
+        if commit:
+            user.save()
+        return user
+
+
+class EmailAuthenticationForm(forms.Form):
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'input-field'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'input-field'}))
 
 
 def _apply_form_styles(form):
@@ -17,8 +52,7 @@ def register_view(request):
         return redirect('users:dashboard')
     
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-        form = _apply_form_styles(form)
+        form = EmailUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -27,8 +61,7 @@ def register_view(request):
         else:
             messages.error(request, 'Registration failed. Please correct the errors.')
     else:
-        form = UserCreationForm()
-        form = _apply_form_styles(form)
+        form = EmailUserCreationForm()
     
     return render(request, 'users/register.html', {'form': form})
 
@@ -38,23 +71,21 @@ def login_view(request):
         return redirect('users:dashboard')
     
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        form = _apply_form_styles(form)
+        form = EmailAuthenticationForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
+            email = form.cleaned_data.get('email')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                messages.success(request, f'Welcome back, {username}!')
+                messages.success(request, f'Welcome back, {email}!')
                 return redirect('users:dashboard')
             else:
-                messages.error(request, 'Invalid username or password.')
+                messages.error(request, 'Invalid email or password.')
         else:
-            messages.error(request, 'Invalid username or password.')
+            messages.error(request, 'Invalid email or password.')
     else:
-        form = AuthenticationForm()
-        form = _apply_form_styles(form)
+        form = EmailAuthenticationForm()
     
     return render(request, 'users/login.html', {'form': form})
 
