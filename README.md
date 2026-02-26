@@ -25,6 +25,17 @@ A production-ready Django web application with MongoDB and Tailwind CSS for send
 - Node.js 16+ (for Tailwind CSS)
 - MongoDB (local or MongoDB Atlas)
 
+## For GitHub Users
+
+If you are cloning this repository:
+
+1. Fork or clone the repo.
+2. Copy `.env.example` to `.env` and set your values.
+3. Install dependencies: `pip install -r requirements.txt` and `npm install`.
+4. Build Tailwind CSS: `npm run tailwind:build`.
+5. Run migrations: `python manage.py migrate`.
+6. Start the server: `python manage.py runserver`.
+
 ## Setup Instructions
 
 ### 1. Clone the Repository

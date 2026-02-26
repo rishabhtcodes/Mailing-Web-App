@@ -5,12 +5,20 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 
 
+def _apply_form_styles(form):
+    for field in form.fields.values():
+        existing = field.widget.attrs.get('class', '')
+        field.widget.attrs['class'] = f"{existing} input-field".strip()
+    return form
+
+
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('users:dashboard')
     
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
+        form = _apply_form_styles(form)
         if form.is_valid():
             user = form.save()
             login(request, user)
@@ -20,6 +28,7 @@ def register_view(request):
             messages.error(request, 'Registration failed. Please correct the errors.')
     else:
         form = UserCreationForm()
+        form = _apply_form_styles(form)
     
     return render(request, 'users/register.html', {'form': form})
 
@@ -30,6 +39,7 @@ def login_view(request):
     
     if request.method == 'POST':
         form = AuthenticationForm(request, data=request.POST)
+        form = _apply_form_styles(form)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
@@ -44,6 +54,7 @@ def login_view(request):
             messages.error(request, 'Invalid username or password.')
     else:
         form = AuthenticationForm()
+        form = _apply_form_styles(form)
     
     return render(request, 'users/login.html', {'form': form})
 
