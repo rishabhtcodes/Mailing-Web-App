@@ -12,15 +12,15 @@
                 {% csrf_token %}
                 
                 <div class="form-group">
-                    <label for="{{ form.username.id_for_label }}" class="form-label">Username</label>
-                    {{ form.username }}
-                    {% if form.username.errors %}
-                        {% for error in form.username.errors %}
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        {% for error in form.email.errors %}
                             <p class="text-red-600 text-sm mt-1">{{ error }}</p>
                         {% endfor %}
                     {% endif %}
-                    {% if form.username.help_text %}
-                        <p class="text-gray-500 text-sm mt-1">{{ form.username.help_text }}</p>
+                    {% if form.email.help_text %}
+                        <p class="text-gray-500 text-sm mt-1">{{ form.email.help_text }}</p>
                     {% endif %}
                 </div>
 
