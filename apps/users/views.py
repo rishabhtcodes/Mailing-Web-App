@@ -3,6 +3,9 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+from django.utils import timezone
 from django import forms
 from .models import CustomUser
 
@@ -56,7 +59,23 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, 'Registration successful!')
+            # Send welcome email
+            try:
+                send_mail(
+                    subject='Welcome to Mailing Web App!',
+                    message=(
+                        f'Hi {user.username},\n\n'
+                        f'Welcome to Mailing Web App! Your account has been created successfully.\n\n'
+                        f'You can now send and manage emails using our platform.\n\n'
+                        f'Best regards,\nMailing Web App Team'
+                    ),
+                    from_email=settings.EMAIL_HOST_USER,
+                    recipient_list=[user.email],
+                    fail_silently=True,
+                )
+            except Exception:
+                pass
+            messages.success(request, 'Registration successful! A welcome email has been sent.')
             return redirect('users:dashboard')
         else:
             messages.error(request, 'Registration failed. Please correct the errors.')
@@ -78,6 +97,24 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
+                # Send login notification email
+                try:
+                    login_time = timezone.now().strftime('%B %d, %Y at %I:%M %p')
+                    send_mail(
+                        subject='Login Notification - Mailing Web App',
+                        message=(
+                            f'Hi {user.username},\n\n'
+                            f'You have successfully logged in to your Mailing Web App account.\n\n'
+                            f'Login Time: {login_time}\n\n'
+                            f'If this wasn\'t you, please secure your account immediately.\n\n'
+                            f'Best regards,\nMailing Web App Team'
+                        ),
+                        from_email=settings.EMAIL_HOST_USER,
+                        recipient_list=[user.email],
+                        fail_silently=True,
+                    )
+                except Exception:
+                    pass
                 messages.success(request, f'Welcome back, {email}!')
                 return redirect('users:dashboard')
             else:
