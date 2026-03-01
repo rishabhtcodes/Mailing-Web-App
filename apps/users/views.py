@@ -59,7 +59,6 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            # Send welcome email
             try:
                 send_mail(
                     subject='Welcome to RTC!',
@@ -97,7 +96,6 @@ def login_view(request):
             user = authenticate(request, username=email, password=password)
             if user is not None:
                 login(request, user)
-                # Send login notification email
                 try:
                     login_time = timezone.now().strftime('%B %d, %Y at %I:%M %p')
                     send_mail(
