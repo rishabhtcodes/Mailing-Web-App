@@ -61,12 +61,12 @@ def register_view(request):
             login(request, user)
             try:
                 send_mail(
-                    subject='Welcome to RTC!',
+                    subject='Welcome to rishabhtcodes!',
                     message=(
                         f'Hi {user.username},\n\n'
-                        f'Welcome to RTC! Your account has been created successfully.\n\n'
+                        f'Welcome to rishabhtcodes! Your account has been created successfully.\n\n'
                         f'You can now send and manage emails using our platform.\n\n'
-                        f'Best regards,\nRTC Team'
+                        f'Best regards,\nrishabhtcodes Team'
                     ),
                     from_email=settings.EMAIL_HOST_USER,
                     recipient_list=[user.email],
@@ -99,13 +99,13 @@ def login_view(request):
                 try:
                     login_time = timezone.now().strftime('%B %d, %Y at %I:%M %p')
                     send_mail(
-                        subject='Login Notification - RTC',
+                        subject='Login Notification - rishabhtcodes',
                         message=(
                             f'Hi {user.username},\n\n'
-                            f'You have successfully logged in to your RTC account.\n\n'
+                            f'You have successfully logged in to your rishabhtcodes account.\n\n'
                             f'Login Time: {login_time}\n\n'
                             f'If this wasn\'t you, please secure your account immediately.\n\n'
-                            f'Best regards,\nRTC Team'
+                            f'Best regards,\nrishabhtcodes Team'
                         ),
                         from_email=settings.EMAIL_HOST_USER,
                         recipient_list=[user.email],
