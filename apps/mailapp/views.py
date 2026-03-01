@@ -18,7 +18,6 @@ def send_email_view(request):
             return redirect('mailapp:send_email')
         
         try:
-            # Send email
             send_mail(
                 subject=subject,
                 message=message,
@@ -27,7 +26,6 @@ def send_email_view(request):
                 fail_silently=False,
             )
             
-            # Store in database
             EmailHistory.objects.create(
                 user=request.user,
                 recipient=recipient,
