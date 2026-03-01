@@ -10,14 +10,12 @@
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
-        <!-- Send Email Card -->
         <a href="{% url 'mailapp:send_email' %}" class="card group hover:border-blue-500 border-2 border-transparent cursor-pointer">
             <div class="text-5xl mb-4">✉️</div>
             <h3 class="text-2xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Send Email</h3>
             <p class="text-gray-600">Compose and send a new email</p>
         </a>
 
-        <!-- Email History Card -->
         <a href="{% url 'mailapp:email_history' %}" class="card group hover:border-blue-500 border-2 border-transparent cursor-pointer">
             <div class="text-5xl mb-4">📨</div>
             <h3 class="text-2xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600">Email History</h3>
@@ -25,7 +23,6 @@
         </a>
     </div>
 
-    <!-- Quick Stats -->
     <div class="mt-12">
         <h2 class="text-2xl font-bold text-gray-900 mb-6">Quick Stats</h2>
         <div class="grid md:grid-cols-3 gap-6">
