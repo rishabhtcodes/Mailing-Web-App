@@ -6,6 +6,7 @@ app_name = 'mailapp'
 urlpatterns = [
     path('inbox/', views.inbox_view, name='inbox'),
     path('send/', views.send_email_view, name='send_email'),
+    path('ai-assist/', views.ai_assist_view, name='ai_assist'),
     path('star/<int:mail_id>/', views.toggle_star_view, name='toggle_star'),
     path('delete/<int:mail_id>/', views.delete_email_view, name='delete_email'),
     path('home/', views.home_view, name='home'),

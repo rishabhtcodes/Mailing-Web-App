@@ -21,3 +21,16 @@ class EmailHistory(models.Model):
     def __str__(self):
         return f"{self.subject} to {self.recipient}"
 
+
+class EmailAttachment(models.Model):
+    email = models.ForeignKey(EmailHistory, on_delete=models.CASCADE, related_name='attachments')
+    file = models.FileField(upload_to='attachments/%Y/%m/%d/')
+    filename = models.CharField(max_length=255)
+    file_type = models.CharField(max_length=100) # image, pdf, audio, document, other
+    file_size = models.BigIntegerField(default=0)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.filename} ({self.file_type})"
+
+

@@ -39,6 +39,22 @@ class CustomUser(AbstractUser):
     smtp_use_tls = models.BooleanField(default=True)
     smtp_username = models.CharField(max_length=255, blank=True, default='')
     smtp_password = models.CharField(max_length=255, blank=True, default='')
+
+    # Multi-LLM Configuration Settings
+    LLM_CHOICES = [
+        ('gemini', 'Google Gemini 1.5'),
+        ('openai', 'OpenAI GPT-4o'),
+        ('claude', 'Anthropic Claude 3.5'),
+        ('groq', 'Groq / Llama 3'),
+        ('offline', 'Built-in Smart AI (Offline)'),
+    ]
+    llm_provider = models.CharField(max_length=50, choices=LLM_CHOICES, default='gemini')
+    gemini_api_key = models.CharField(max_length=255, blank=True, default='')
+    openai_api_key = models.CharField(max_length=255, blank=True, default='')
+    anthropic_api_key = models.CharField(max_length=255, blank=True, default='')
+    groq_api_key = models.CharField(max_length=255, blank=True, default='')
+    ai_tone_preference = models.CharField(max_length=50, default='professional')
+
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

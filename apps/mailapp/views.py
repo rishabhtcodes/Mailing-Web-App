@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.core.mail import EmailMessage
 from django.contrib import messages
+from django.http import JsonResponse
 from django.utils import timezone
 from .models import EmailHistory
 from apps.users.models import get_active_user
@@ -15,12 +16,12 @@ def _seed_demo_emails_if_empty(user):
         {
             'sender_email': 'Jhone@gmail.com',
             'recipient': user.email,
-            'subject': 'Happy Birthday!!! 🎁',
+            'subject': 'Happy Birthday!!!',
             'message': (
                 f"Hi, {user.username or 'Gilang Ananta'}\n\n"
-                "Today you received a birthday gift from our team 🎁, We hope this small gift makes your day "
+                "Today you received a birthday gift from our team. We hope this small gift makes your day "
                 "more special and full of smiles. Thank you for being a part of our journey together. "
-                "Happy birthday! Wishing you success, health, and happiness always 🌟\n\n"
+                "Happy birthday! Wishing you success, health, and happiness always.\n\n"
                 "Thank you for being a part of our journey together.\n\n"
                 "Regards,\nJhone"
             ),
@@ -111,6 +112,55 @@ def inbox_view(request):
     })
 
 
+import json
+from django.views.decorators.csrf import csrf_exempt
+from .models import EmailHistory, EmailAttachment
+
+
+def ai_assist_view(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'POST required'}, status=405)
+    
+    try:
+        data = json.loads(request.body.decode('utf-8'))
+    except Exception:
+        data = request.POST
+
+    prompt = data.get('prompt', '')
+    action = data.get('action', 'generate')
+    provider = data.get('provider', '')
+    tone = data.get('tone', '')
+
+    user = get_active_user(request)
+    provider = provider or user.llm_provider
+    tone = tone or user.ai_tone_preference
+
+    api_key = ''
+    if provider == 'gemini':
+        api_key = user.gemini_api_key
+    elif provider == 'openai':
+        api_key = user.openai_api_key
+    elif provider == 'claude':
+        api_key = user.anthropic_api_key
+    elif provider == 'groq':
+        api_key = user.groq_api_key
+
+    from .ai_service import generate_or_refine_email
+    result_text = generate_or_refine_email(
+        prompt=prompt,
+        action=action,
+        provider=provider,
+        api_key=api_key,
+        tone=tone
+    )
+
+    return JsonResponse({
+        'result': result_text,
+        'provider': provider,
+        'tone': tone
+    })
+
+
 def send_email_view(request):
     if request.method == 'POST':
         recipient = request.POST.get('recipient', '').strip()
@@ -118,6 +168,7 @@ def send_email_view(request):
         bcc = request.POST.get('bcc', '').strip()
         subject = request.POST.get('subject', '').strip()
         message = request.POST.get('message', '').strip()
+        uploaded_files = request.FILES.getlist('attachments')
 
         if not all([recipient, subject, message]):
             messages.error(request, 'Recipient, Subject, and Message are required.')
@@ -141,6 +192,12 @@ def send_email_view(request):
                 bcc=bcc_list if bcc_list else None,
                 connection=connection,
             )
+
+            # Attach uploaded files to outgoing email
+            for f in uploaded_files:
+                email_obj.attach(f.name, f.read(), f.content_type)
+                f.seek(0)
+
             email_obj.send(fail_silently=False)
 
             # Store in EmailHistory database
@@ -154,6 +211,29 @@ def send_email_view(request):
                 message=message,
                 folder='sent'
             )
+
+            # Store attachments in EmailAttachment
+            for f in uploaded_files:
+                content_type = f.content_type or ''
+                fname = f.name.lower()
+                if 'image' in content_type or fname.endswith(('.png', '.jpg', '.jpeg', '.gif', '.webp')):
+                    ftype = 'image'
+                elif 'pdf' in content_type or fname.endswith('.pdf'):
+                    ftype = 'pdf'
+                elif 'audio' in content_type or fname.endswith(('.mp3', '.wav', '.ogg', '.m4a')):
+                    ftype = 'audio'
+                elif fname.endswith(('.doc', '.docx', '.txt', '.csv')):
+                    ftype = 'document'
+                else:
+                    ftype = 'other'
+
+                EmailAttachment.objects.create(
+                    email=sent_record,
+                    file=f,
+                    filename=f.name,
+                    file_type=ftype,
+                    file_size=f.size
+                )
 
             smtp_info = f" via {user.smtp_username}" if user.use_custom_smtp else " (Demo Fallback)"
             messages.success(request, f'Email successfully sent to {recipient}{smtp_info}!')
