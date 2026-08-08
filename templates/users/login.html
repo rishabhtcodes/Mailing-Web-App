@@ -1,46 +1,57 @@
-{% extends 'base.html' %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-[#f4f5f7]">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mailing</title>
+    <link rel="stylesheet" href="{% static 'css/output.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="h-full font-sans antialiased text-gray-900 bg-[#f4f5f7] flex items-center justify-center p-4">
 
-{% block title %}Login - rishabhtcodes{% endblock %}
-
-{% block content %}
-<div class="container-main py-12">
-    <div class="max-w-md mx-auto">
-        <div class="card">
-            <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Login</h2>
-            
-            <form method="post" class="space-y-6">
-                {% csrf_token %}
-                
-                <div class="form-group">
-                    <label for="{{ form.email.id_for_label }}" class="form-label">Email</label>
-                    {{ form.email }}
-                    {% if form.email.errors %}
-                        <p class="text-red-600 text-sm mt-1">{{ form.email.errors.0 }}</p>
-                    {% endif %}
-                </div>
-
-                <div class="form-group">
-                    <label for="{{ form.password.id_for_label }}" class="form-label">Password</label>
-                    {{ form.password }}
-                    {% if form.password.errors %}
-                        <p class="text-red-600 text-sm mt-1">{{ form.password.errors.0 }}</p>
-                    {% endif %}
-                </div>
-
-                {% if form.non_field_errors %}
-                    <div class="bg-red-100 text-red-800 p-3 rounded-lg">
-                        {{ form.non_field_errors }}
-                    </div>
-                {% endif %}
-
-                <button type="submit" class="btn-primary w-full">Login</button>
-            </form>
-
-            <p class="text-center text-gray-600 mt-6">
-                Don't have an account? 
-                <a href="{% url 'users:register' %}" class="text-blue-600 hover:underline font-semibold">Register here</a>
-            </p>
+    <div class="w-full max-w-md bg-white border border-gray-200/70 rounded-2xl p-8 shadow-sm">
+        <div class="text-center mb-8">
+            <div class="w-10 h-10 rounded-xl bg-neutral-900 text-white font-bold flex items-center justify-center text-xl mx-auto mb-3 shadow-xs">
+                ✉️
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Welcome Back</h1>
+            <p class="text-xs text-gray-500 mt-1">Sign in to manage your emails & custom SMTP settings</p>
         </div>
+
+        {% if messages %}
+            <div class="mb-4">
+                {% for message in messages %}
+                    <div class="p-3 rounded-xl text-xs font-medium border {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border-rose-200{% else %}bg-blue-50 text-blue-800 border-blue-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" class="space-y-4">
+            {% csrf_token %}
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
+                {{ form.email }}
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                {{ form.password }}
+            </div>
+
+            <button type="submit" class="btn-primary w-full py-2.5 mt-2">
+                Sign In
+            </button>
+        </form>
+
+        <p class="text-center text-xs text-gray-500 mt-6">
+            Don't have an account? 
+            <a href="{% url 'users:register' %}" class="text-gray-900 hover:underline font-semibold">Create account</a>
+        </p>
     </div>
-</div>
-{% endblock %}
+
+</body>
+</html>
