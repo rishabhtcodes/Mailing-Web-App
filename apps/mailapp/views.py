@@ -74,6 +74,14 @@ def _seed_demo_emails_if_empty(user):
         EmailHistory.objects.create(user=user, **data)
 
 
+def landing_view(request):
+    user = request.user if request.user.is_authenticated else None
+    return render(request, 'landing.html', {
+        'user': user,
+        'active_tab': 'landing'
+    })
+
+
 def inbox_view(request):
     user = get_active_user(request)
     _seed_demo_emails_if_empty(user)

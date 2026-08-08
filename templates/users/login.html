@@ -1,56 +1,60 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#f4f5f7]">
+<html lang="en" class="h-full bg-[#f8fafc]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - Mailing</title>
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body class="h-full font-sans antialiased text-gray-900 bg-[#f4f5f7] flex items-center justify-center p-4">
+<body class="h-full font-sans antialiased text-gray-900 bg-[#f8fafc] flex items-center justify-center p-4 relative glow-gradient">
 
-    <div class="w-full max-w-md bg-white border border-gray-200/70 rounded-2xl p-8 shadow-sm">
-        <div class="text-center mb-8">
-            <div class="w-10 h-10 rounded-xl bg-neutral-900 text-white font-bold flex items-center justify-center mx-auto mb-3 shadow-xs">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
-            </div>
-            <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Welcome Back</h1>
-            <p class="text-xs text-gray-500 mt-1">Sign in to manage your emails & custom SMTP settings</p>
-        </div>
-
-        {% if messages %}
-            <div class="mb-4">
-                {% for message in messages %}
-                    <div class="p-3 rounded-xl text-xs font-medium border {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border-rose-200{% else %}bg-blue-50 text-blue-800 border-blue-200{% endif %}">
-                        {{ message }}
+    <div class="w-full max-w-md perspective-1000">
+        <div class="tilt-card preserve-3d glass-card rounded-3xl p-8 shadow-2xl border border-white/80">
+            <div class="text-center mb-8">
+                <a href="{% url 'mailapp:landing' %}" class="inline-flex items-center gap-2 mb-4 group">
+                    <div class="w-10 h-10 rounded-2xl bg-neutral-900 text-white font-bold flex items-center justify-center shadow-md group-hover:scale-105 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                     </div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <form method="post" class="space-y-4">
-            {% csrf_token %}
-
-            <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
-                {{ form.email }}
+                </a>
+                <h1 class="text-2xl font-extrabold text-gray-900 tracking-tight">Welcome Back</h1>
+                <p class="text-xs text-gray-500 mt-1">Sign in to your Multi-LLM & Voice Mailing account</p>
             </div>
 
-            <div>
-                <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
-                {{ form.password }}
+            {% if messages %}
+                <div class="mb-4">
+                    {% for message in messages %}
+                        <div class="p-3 rounded-xl text-xs font-medium border {% if message.tags == 'error' %}bg-rose-50 text-rose-800 border-rose-200{% else %}bg-blue-50 text-blue-800 border-blue-200{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Email Address</label>
+                    {{ form.email }}
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 mb-1">Password</label>
+                    {{ form.password }}
+                </div>
+
+                <button type="submit" class="btn-primary w-full py-3 mt-2 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition">
+                    Sign In to Dashboard →
+                </button>
+            </form>
+
+            <div class="flex items-center justify-between text-xs text-gray-500 mt-6 pt-4 border-t border-gray-200/50">
+                <a href="{% url 'mailapp:landing' %}" class="hover:text-gray-900">← Back to Preview</a>
+                <p>Don't have an account? <a href="{% url 'users:register' %}" class="text-gray-900 font-bold hover:underline">Register</a></p>
             </div>
-
-            <button type="submit" class="btn-primary w-full py-2.5 mt-2">
-                Sign In
-            </button>
-        </form>
-
-        <p class="text-center text-xs text-gray-500 mt-6">
-            Don't have an account? 
-            <a href="{% url 'users:register' %}" class="text-gray-900 hover:underline font-semibold">Create account</a>
-        </p>
+        </div>
     </div>
 
 </body>

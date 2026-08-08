@@ -130,7 +130,7 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     messages.info(request, 'You have been logged out.')
-    return redirect('users:login')
+    return redirect('mailapp:landing')
 
 
 def settings_view(request):

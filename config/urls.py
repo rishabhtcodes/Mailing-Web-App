@@ -4,17 +4,15 @@ from django.views.generic import TemplateView
 
 from django.shortcuts import redirect
 
-def root_redirect(request):
-    return redirect('mailapp:inbox')
-
 from django.conf import settings
 from django.conf.urls.static import static
+from apps.mailapp.views import landing_view
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('users/', include('apps.users.urls')),
     path('mail/', include('apps.mailapp.urls')),
-    path('', root_redirect, name='index'),
+    path('', landing_view, name='index'),
 ]
 
 if settings.DEBUG:

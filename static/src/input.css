@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -9,6 +9,7 @@
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background-color: #f4f5f7;
     color: #1f2937;
+    overflow-x: hidden;
   }
 }
 
@@ -47,6 +48,35 @@
 
   .card-panel {
     @apply bg-white rounded-2xl border border-gray-200/70 shadow-sm overflow-hidden;
+  }
+
+  /* 3D Dynamic Card Styles */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .tilt-card {
+    transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.2s ease;
+  }
+
+  .tilt-card:hover {
+    transform: translateY(-6px) rotateX(4deg) rotateY(-4deg) translateZ(10px);
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.08), 0 10px 15px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+  }
+
+  .glow-gradient {
+    background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%);
   }
 }
 

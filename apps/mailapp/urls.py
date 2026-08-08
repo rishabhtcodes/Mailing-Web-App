@@ -4,6 +4,7 @@ from . import views
 app_name = 'mailapp'
 
 urlpatterns = [
+    path('preview/', views.landing_view, name='landing'),
     path('inbox/', views.inbox_view, name='inbox'),
     path('send/', views.send_email_view, name='send_email'),
     path('ai-assist/', views.ai_assist_view, name='ai_assist'),

@@ -83,7 +83,7 @@ class UsersViewTests(TestCase):
         self.client.login(username='user@example.com', password='Password123!')
         response = self.client.get(self.logout_url)
         self.assertEqual(response.status_code, 302)
-        self.assertRedirects(response, self.login_url)
+        self.assertRedirects(response, reverse('mailapp:landing'))
 
     def test_settings_direct_access_without_login(self):
         response = self.client.get(self.settings_url)
