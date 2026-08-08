@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 from django.utils import timezone
 from django import forms
-from .models import CustomUser
+from .models import CustomUser, get_active_user
 
 
 class EmailUserCreationForm(UserCreationForm):
@@ -52,7 +52,7 @@ def _apply_form_styles(form):
 
 def register_view(request):
     if request.user.is_authenticated:
-        return redirect('users:dashboard')
+        return redirect('mailapp:inbox')
     
     if request.method == 'POST':
         form = EmailUserCreationForm(request.POST)
@@ -60,6 +60,7 @@ def register_view(request):
             user = form.save()
             login(request, user)
             try:
+                from_email = settings.EMAIL_HOST_USER or getattr(settings, 'DEFAULT_FROM_EMAIL', 'webmaster@localhost')
                 send_mail(
                     subject='Welcome to rishabhtcodes!',
                     message=(
@@ -68,14 +69,14 @@ def register_view(request):
                         f'You can now send and manage emails using our platform.\n\n'
                         f'Best regards,\nrishabhtcodes Team'
                     ),
-                    from_email=settings.EMAIL_HOST_USER,
+                    from_email=from_email,
                     recipient_list=[user.email],
                     fail_silently=True,
                 )
             except Exception:
                 pass
             messages.success(request, 'Registration successful! A welcome email has been sent.')
-            return redirect('users:dashboard')
+            return redirect('mailapp:inbox')
         else:
             messages.error(request, 'Registration failed. Please correct the errors.')
     else:
@@ -86,7 +87,7 @@ def register_view(request):
 
 def login_view(request):
     if request.user.is_authenticated:
-        return redirect('users:dashboard')
+        return redirect('mailapp:inbox')
     
     if request.method == 'POST':
         form = EmailAuthenticationForm(request.POST)
@@ -98,6 +99,7 @@ def login_view(request):
                 login(request, user)
                 try:
                     login_time = timezone.now().strftime('%B %d, %Y at %I:%M %p')
+                    from_email = settings.EMAIL_HOST_USER or getattr(settings, 'DEFAULT_FROM_EMAIL', 'webmaster@localhost')
                     send_mail(
                         subject='Login Notification - rishabhtcodes',
                         message=(
@@ -107,14 +109,14 @@ def login_view(request):
                             f'If this wasn\'t you, please secure your account immediately.\n\n'
                             f'Best regards,\nrishabhtcodes Team'
                         ),
-                        from_email=settings.EMAIL_HOST_USER,
+                        from_email=from_email,
                         recipient_list=[user.email],
                         fail_silently=True,
                     )
                 except Exception:
                     pass
                 messages.success(request, f'Welcome back, {email}!')
-                return redirect('users:dashboard')
+                return redirect('mailapp:inbox')
             else:
                 messages.error(request, 'Invalid email or password.')
         else:
@@ -131,6 +133,42 @@ def logout_view(request):
     return redirect('users:login')
 
 
-@login_required
-def dashboard_view(request):
-    return render(request, 'users/dashboard.html', {'user': request.user})
+def settings_view(request):
+    from .forms import UserSettingsForm
+    user = get_active_user(request)
+    if request.method == 'POST':
+        form = UserSettingsForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Settings updated successfully!')
+            return redirect('users:settings')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = UserSettingsForm(instance=user)
+
+    return render(request, 'users/settings.html', {
+        'user': user,
+        'form': form,
+        'active_tab': 'settings'
+    })
+
+
+def test_smtp_view(request):
+    user = get_active_user(request)
+    if not user.use_custom_smtp:
+        messages.warning(request, 'Custom SMTP is disabled in your settings.')
+        return redirect('users:settings')
+    
+    try:
+        connection = user.get_smtp_connection()
+        connection.open()
+        connection.close()
+        messages.success(request, f'SMTP Connection Successful! Connected to {user.smtp_host}:{user.smtp_port} as {user.smtp_username}.')
+    except Exception as e:
+        messages.error(request, f'SMTP Connection Failed: {str(e)}')
+        
+    return redirect('users:settings')
+
+
+
