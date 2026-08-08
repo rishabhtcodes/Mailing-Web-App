@@ -230,7 +230,22 @@
                             </span>
                             <span id="mic_text">Voice Dictation</span>
                         </button>
+
+                        <button type="button" id="voice_note_btn" onclick="toggleVoiceNoteRecording()" class="px-2.5 py-1 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 text-xs font-semibold hover:bg-indigo-100 transition flex items-center gap-1.5" title="Record Voice Note Audio Attachment">
+                            <svg class="w-3.5 h-3.5 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                            <span id="vn_text">Record Audio</span>
+                        </button>
                     </div>
+                </div>
+
+                <!-- Live Dictation Feedback Banner -->
+                <div id="live_dictation_banner" class="hidden p-2 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 flex items-center justify-between">
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="w-2 h-2 rounded-full bg-rose-600 animate-ping shrink-0"></span>
+                        <span class="font-semibold shrink-0">Live Dictation:</span>
+                        <span id="interim_transcript" class="italic truncate text-rose-700">Listening...</span>
+                    </div>
+                    <button type="button" onclick="stopVoiceDictation()" class="text-xs font-bold text-rose-600 underline shrink-0 ml-2">Done</button>
                 </div>
 
                 <!-- Message Textarea -->
@@ -240,7 +255,7 @@
                         name="message" 
                         rows="3" 
                         required 
-                        placeholder="Type your message here or use Voice Dictation / AI Writer..." 
+                        placeholder="Type your message here or click Voice Dictation / AI Writer..." 
                         class="w-full bg-transparent text-xs text-gray-700 focus:outline-none resize-none placeholder-gray-400 leading-relaxed"
                     >Thank you, may your prayers return to you.</textarea>
                 </div>
@@ -380,78 +395,177 @@
         }
     }
 
-    // Voice Dictation (Speech Recognition)
+    // Voice Dictation (Robust Continuous Speech-to-Text)
     let recognition = null;
-    let isRecording = false;
+    let userWantsDictation = false;
 
     function toggleVoiceDictation() {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const micBtn = document.getElementById('mic_btn');
-        const micIcon = document.getElementById('mic_icon');
-        const micText = document.getElementById('mic_text');
+        if (userWantsDictation) {
+            stopVoiceDictation();
+        } else {
+            startVoiceDictation();
+        }
+    }
 
+    function startVoiceDictation() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (!SpeechRecognition) {
             alert('Web Speech Recognition API is not supported in your browser. Please use Chrome, Edge, or Safari.');
             return;
         }
 
-        const defaultMicSvg = `<svg class="w-3.5 h-3.5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>`;
+        userWantsDictation = true;
+        const micBtn = document.getElementById('mic_btn');
+        const micIcon = document.getElementById('mic_icon');
+        const micText = document.getElementById('mic_text');
+        const banner = document.getElementById('live_dictation_banner');
+        const interimSpan = document.getElementById('interim_transcript');
+
         const activeMicSvg = `<svg class="w-3.5 h-3.5 text-white shrink-0 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path></svg>`;
 
-        if (isRecording) {
-            recognition.stop();
-            isRecording = false;
-            micBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
-            micBtn.classList.add('bg-rose-50', 'text-rose-700');
-            micIcon.innerHTML = defaultMicSvg;
-            micText.innerText = 'Voice Dictation';
+        micBtn.classList.remove('bg-rose-50', 'text-rose-700');
+        micBtn.classList.add('bg-red-500', 'text-white', 'animate-pulse');
+        micIcon.innerHTML = activeMicSvg;
+        micText.innerText = 'Dictating...';
+        banner.classList.remove('hidden');
+
+        if (!recognition) {
+            recognition = new SpeechRecognition();
+            recognition.continuous = true;
+            recognition.interimResults = true;
+            recognition.lang = 'en-US';
+
+            recognition.onresult = function(event) {
+                let interimTranscript = '';
+                let finalTranscript = '';
+
+                for (let i = event.resultIndex; i < event.results.length; ++i) {
+                    if (event.results[i].isFinal) {
+                        finalTranscript += event.results[i][0].transcript + ' ';
+                    } else {
+                        interimTranscript += event.results[i][0].transcript;
+                    }
+                }
+
+                if (interimTranscript) {
+                    interimSpan.innerText = `"${interimTranscript.trim()}"`;
+                } else {
+                    interimSpan.innerText = 'Listening... Speak now';
+                }
+
+                if (finalTranscript) {
+                    const textarea = document.getElementById('email_message');
+                    textarea.value += (textarea.value ? ' ' : '') + finalTranscript.trim();
+                }
+            };
+
+            recognition.onerror = function(event) {
+                console.warn('Speech recognition status:', event.error);
+                if (event.error === 'not-allowed') {
+                    alert('Microphone permission denied. Please allow microphone access in your browser settings.');
+                    stopVoiceDictation();
+                }
+            };
+
+            recognition.onend = function() {
+                // Auto-restart if user still wants continuous dictation
+                if (userWantsDictation) {
+                    try {
+                        recognition.start();
+                    } catch (e) {
+                        console.log('Recognition restart:', e);
+                    }
+                }
+            };
+        }
+
+        try {
+            recognition.start();
+        } catch (e) {
+            console.log('Already started:', e);
+        }
+    }
+
+    function stopVoiceDictation() {
+        userWantsDictation = false;
+        if (recognition) {
+            try { recognition.stop(); } catch (e) {}
+        }
+
+        const micBtn = document.getElementById('mic_btn');
+        const micIcon = document.getElementById('mic_icon');
+        const micText = document.getElementById('mic_text');
+        const banner = document.getElementById('live_dictation_banner');
+
+        const defaultMicSvg = `<svg class="w-3.5 h-3.5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>`;
+
+        micBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
+        micBtn.classList.add('bg-rose-50', 'text-rose-700');
+        micIcon.innerHTML = defaultMicSvg;
+        micText.innerText = 'Voice Dictation';
+        banner.classList.add('hidden');
+    }
+
+    // Voice Note Recorder (MediaRecorder API for Audio File Attachments)
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let isRecordingAudio = false;
+
+    async function toggleVoiceNoteRecording() {
+        const vnBtn = document.getElementById('voice_note_btn');
+        const vnText = document.getElementById('vn_text');
+
+        if (isRecordingAudio) {
+            mediaRecorder.stop();
+            isRecordingAudio = false;
+            vnBtn.classList.remove('bg-indigo-600', 'text-white', 'animate-pulse');
+            vnBtn.classList.add('bg-indigo-50', 'text-indigo-700');
+            vnText.innerText = 'Record Audio';
             return;
         }
 
-        recognition = new SpeechRecognition();
-        recognition.continuous = true;
-        recognition.interimResults = true;
-        recognition.lang = 'en-US';
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            alert('Audio recording is not supported in your browser.');
+            return;
+        }
 
-        recognition.onstart = function() {
-            isRecording = true;
-            micBtn.classList.remove('bg-rose-50', 'text-rose-700');
-            micBtn.classList.add('bg-red-500', 'text-white', 'animate-pulse');
-            micIcon.innerHTML = activeMicSvg;
-            micText.innerText = 'Listening... Speak now';
-        };
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
 
-        recognition.onresult = function(event) {
-            let finalTranscript = '';
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
-                if (event.results[i].isFinal) {
-                    finalTranscript += event.results[i][0].transcript + ' ';
+            mediaRecorder.ondataavailable = event => {
+                if (event.data.size > 0) audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const file = new File([audioBlob], `Voice_Note_${Date.now()}.webm`, { type: 'audio/webm' });
+
+                // Attach to dataTransfer / file input container
+                const fileInput = document.getElementById('file_input');
+                const dt = new DataTransfer();
+                if (fileInput.files) {
+                    for (let existingFile of fileInput.files) {
+                        dt.items.add(existingFile);
+                    }
                 }
-            }
-            if (finalTranscript) {
-                const textarea = document.getElementById('email_message');
-                textarea.value += (textarea.value ? ' ' : '') + finalTranscript.trim();
-            }
-        };
+                dt.items.add(file);
+                fileInput.files = dt.files;
 
-        recognition.onerror = function(event) {
-            console.error('Speech recognition error:', event.error);
-            isRecording = false;
-            micBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
-            micBtn.classList.add('bg-rose-50', 'text-rose-700');
-            micIcon.innerHTML = defaultMicSvg;
-            micText.innerText = 'Voice Dictation';
-        };
+                renderSelectedFiles(fileInput);
+                stream.getTracks().forEach(track => track.stop());
+            };
 
-        recognition.onend = function() {
-            isRecording = false;
-            micBtn.classList.remove('bg-red-500', 'text-white', 'animate-pulse');
-            micBtn.classList.add('bg-rose-50', 'text-rose-700');
-            micIcon.innerHTML = defaultMicSvg;
-            micText.innerText = 'Voice Dictation';
-        };
-
-        recognition.start();
+            mediaRecorder.start();
+            isRecordingAudio = true;
+            vnBtn.classList.remove('bg-indigo-50', 'text-indigo-700');
+            vnBtn.classList.add('bg-indigo-600', 'text-white', 'animate-pulse');
+            vnText.innerText = 'Recording Audio...';
+        } catch (err) {
+            console.error('Microphone error:', err);
+            alert('Failed to access microphone. Please check permissions.');
+        }
     }
 
     // Render File Attachment Pills with Vector Icons
