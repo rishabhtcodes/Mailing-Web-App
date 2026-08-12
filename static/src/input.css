@@ -75,8 +75,24 @@
     border: 1px solid rgba(255, 255, 255, 0.8);
   }
 
-  .glow-gradient {
-    background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 70%);
+  /* Cursive Hollow Typography */
+  .font-cursive {
+    font-family: 'Dancing Script', 'Alex Brush', cursive;
+  }
+
+  .text-hollow {
+    color: transparent;
+    -webkit-text-stroke: 2.2px #111827;
+  }
+
+  .text-hollow-purple {
+    color: transparent;
+    -webkit-text-stroke: 2px #7c3aed;
+  }
+
+  .text-hollow-indigo {
+    color: transparent;
+    -webkit-text-stroke: 2px #4f46e5;
   }
 }
 

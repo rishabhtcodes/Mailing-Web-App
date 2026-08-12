@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#f8fafc]">
+<html lang="en" class="h-full bg-[#f8fafc] scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Dancing+Script:wght@600;700&family=Alex+Brush&display=swap" rel="stylesheet">
     <!-- Three.js CDN for 3D Dynamic Ambient Canvas -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -21,7 +21,7 @@
     <div class="relative z-10 flex flex-col min-h-screen">
         
         <!-- Header Navigation Bar -->
-        <header class="w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+        <header class="w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between sticky top-0 bg-[#f8fafc]/80 backdrop-blur-md z-30 border-b border-gray-200/50">
             <a href="{% url 'mailapp:landing' %}" class="flex items-center gap-3">
                 <div class="w-10 h-10 rounded-2xl bg-neutral-900 text-white flex items-center justify-center font-bold shadow-md transform hover:scale-105 transition duration-200">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -31,15 +31,15 @@
                 <span class="font-extrabold text-xl text-gray-900 tracking-tight">Mailing</span>
             </a>
 
-            <!-- Nav Links -->
+            <!-- Functional Nav Links -->
             <nav class="hidden md:flex items-center gap-8 text-xs font-semibold text-gray-600">
-                <a href="#features" class="hover:text-gray-900 transition">Features</a>
-                <a href="#ai-models" class="hover:text-gray-900 transition">AI Engines</a>
-                <a href="#voice-suite" class="hover:text-gray-900 transition">Voice Suite</a>
-                <a href="#smtp-security" class="hover:text-gray-900 transition">Custom SMTP</a>
+                <a href="#features" class="hover:text-gray-900 transition py-1">Features</a>
+                <a href="#ai-models" class="hover:text-gray-900 transition py-1">AI Engines</a>
+                <a href="#voice-suite" class="hover:text-gray-900 transition py-1">Voice Suite</a>
+                <a href="#smtp-security" class="hover:text-gray-900 transition py-1">Custom SMTP</a>
             </nav>
 
-            <!-- Auth CTA Buttons -->
+            <!-- Auth & Dashboard CTA Buttons -->
             <div class="flex items-center gap-3">
                 {% if user.is_authenticated %}
                     <a href="{% url 'mailapp:inbox' %}" class="btn-primary">
@@ -60,17 +60,18 @@
         </header>
 
         <!-- Hero Section -->
-        <main class="flex-1 max-w-7xl mx-auto px-6 pt-12 pb-24 text-center">
+        <main class="flex-1 max-w-7xl mx-auto px-6 pt-10 pb-24 text-center">
             
             <!-- Hero Pill Badge -->
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-gray-200/80 shadow-xs text-xs font-semibold text-gray-700 mb-6 transform hover:scale-105 transition">
-                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span>Powered by Multi-LLM AI & Real-time Speech Engine</span>
+                <span class="w-2 h-2 rounded-full bg-purple-500 animate-pulse"></span>
+                <span>Multi-LLM AI & Voice Dictation Platform</span>
             </div>
 
-            <!-- Main Heading -->
-            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-gray-900 tracking-tight max-w-4xl mx-auto leading-[1.1] mb-6">
-                Intelligent Emailing with <span class="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">3D Precision & AI</span>
+            <!-- Simplified Cursive Hollow Main Heading -->
+            <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black text-gray-900 tracking-tight max-w-4xl mx-auto leading-[1.05] mb-4">
+                Smart Emailing <br>
+                <span class="font-cursive text-hollow-purple text-5xl sm:text-7xl lg:text-8xl font-bold italic tracking-normal inline-block mt-1">made effortless</span>
             </h1>
 
             <p class="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto font-normal leading-relaxed mb-10">
@@ -102,7 +103,7 @@
                         </div>
                         <span class="text-xs font-semibold text-gray-500">Mailing Dashboard Preview</span>
                         <div class="flex items-center gap-2 text-xs text-gray-400">
-                            <span class="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 font-bold text-[10px]">LIVE DEMO</span>
+                            <a href="{% url 'mailapp:inbox' %}" class="px-2 py-0.5 rounded-md bg-gray-200 text-gray-700 font-bold text-[10px] hover:bg-gray-300 transition">LAUNCH DEMO →</a>
                         </div>
                     </div>
 
@@ -112,12 +113,12 @@
                         <div class="col-span-3 bg-gray-50 border border-gray-100 rounded-xl p-3 flex flex-col justify-between">
                             <div class="space-y-2">
                                 <div class="text-[10px] font-bold uppercase tracking-wider text-gray-400 px-1">Navigation</div>
-                                <div class="px-2.5 py-1.5 rounded-lg bg-neutral-900 text-white text-xs font-semibold flex items-center gap-2">
+                                <a href="{% url 'mailapp:inbox' %}" class="px-2.5 py-1.5 rounded-lg bg-neutral-900 text-white text-xs font-semibold flex items-center gap-2 block">
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/></svg>
                                     Inbox
-                                </div>
-                                <div class="px-2.5 py-1.5 text-xs text-gray-500 font-medium">Campaigns</div>
-                                <div class="px-2.5 py-1.5 text-xs text-gray-500 font-medium">Analytics</div>
+                                </a>
+                                <a href="{% url 'mailapp:campaigns' %}" class="px-2.5 py-1.5 text-xs text-gray-500 font-medium block hover:text-gray-900">Campaigns</a>
+                                <a href="{% url 'mailapp:analytics' %}" class="px-2.5 py-1.5 text-xs text-gray-500 font-medium block hover:text-gray-900">Analytics</a>
                             </div>
                             <div class="p-2 rounded-lg bg-white border border-gray-200 flex items-center gap-2">
                                 <div class="w-7 h-7 rounded-full bg-neutral-900 text-white font-bold flex items-center justify-center text-[10px]">RN</div>
@@ -132,16 +133,16 @@
                         <div class="col-span-4 bg-white border border-gray-100 rounded-xl p-3 space-y-2">
                             <div class="text-[11px] font-bold text-gray-900 pb-2 border-b border-gray-100">Inbox Messages (3)</div>
                             
-                            <div class="p-2 rounded-lg bg-gray-100 border-l-2 border-neutral-900">
+                            <a href="{% url 'mailapp:inbox' %}" class="p-2 rounded-lg bg-gray-100 border-l-2 border-neutral-900 block">
                                 <p class="text-[11px] font-bold text-gray-900">Jhone@gmail.com</p>
                                 <p class="text-[10px] text-gray-600 font-medium truncate">Happy Birthday!!!</p>
                                 <p class="text-[9px] text-gray-400 truncate">Today you received a gift...</p>
-                            </div>
+                            </a>
 
-                            <div class="p-2 rounded-lg bg-gray-50 border border-gray-100 opacity-80">
+                            <a href="{% url 'mailapp:inbox' %}" class="p-2 rounded-lg bg-gray-50 border border-gray-100 opacity-80 block">
                                 <p class="text-[11px] font-semibold text-gray-800">scottie@company.com</p>
                                 <p class="text-[10px] text-gray-500 truncate">Documentation Update</p>
-                            </div>
+                            </a>
                         </div>
 
                         <!-- Mini Composer & AI Showcase -->
@@ -161,7 +162,7 @@
                                     <span class="px-2 py-0.5 rounded-md bg-purple-50 text-purple-700 border border-purple-200 text-[10px] font-bold">AI Writer</span>
                                     <span class="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold">Voice Dictation</span>
                                 </div>
-                                <span class="px-3 py-1 rounded-lg bg-neutral-900 text-white text-[10px] font-bold">Send Now</span>
+                                <a href="{% url 'mailapp:inbox' %}" class="px-3 py-1 rounded-lg bg-neutral-900 text-white text-[10px] font-bold">Send Now</a>
                             </div>
                         </div>
                     </div>
@@ -171,7 +172,7 @@
 
         </main>
 
-        <!-- Feature Grid Section -->
+        <!-- Feature Section 1: Overview -->
         <section id="features" class="w-full bg-white border-y border-gray-200/80 py-20 relative z-10">
             <div class="max-w-7xl mx-auto px-6">
                 <div class="text-center max-w-2xl mx-auto mb-16">
@@ -184,8 +185,7 @@
                 </div>
 
                 <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Feature Card 1 -->
-                    <div class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200">
+                    <a href="#ai-models" class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200 block">
                         <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold mb-4">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
                         </div>
@@ -193,10 +193,9 @@
                         <p class="text-xs text-gray-500 leading-relaxed">
                             Connect Google Gemini 1.5, OpenAI GPT-4o, Anthropic Claude, or Groq Llama with custom tone preferences.
                         </p>
-                    </div>
+                    </a>
 
-                    <!-- Feature Card 2 -->
-                    <div class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200">
+                    <a href="#voice-suite" class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200 block">
                         <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold mb-4">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
                         </div>
@@ -204,10 +203,9 @@
                         <p class="text-xs text-gray-500 leading-relaxed">
                             Hands-free continuous Speech-to-Text dictation with live feedback & audio note recording.
                         </p>
-                    </div>
+                    </a>
 
-                    <!-- Feature Card 3 -->
-                    <div class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200">
+                    <a href="{% url 'mailapp:inbox' %}" class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200 block">
                         <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold mb-4">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/></svg>
                         </div>
@@ -215,10 +213,9 @@
                         <p class="text-xs text-gray-500 leading-relaxed">
                             Upload images, PDFs, audio clips, and document attachments directly into your email workflow.
                         </p>
-                    </div>
+                    </a>
 
-                    <!-- Feature Card 4 -->
-                    <div class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200">
+                    <a href="#smtp-security" class="tilt-card preserve-3d p-6 rounded-2xl bg-gray-50 border border-gray-200/80 text-left hover:bg-white transition duration-200 block">
                         <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center font-bold mb-4">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
                         </div>
@@ -226,6 +223,83 @@
                         <p class="text-xs text-gray-500 leading-relaxed">
                             Add your personal email credentials and test connection status live before sending.
                         </p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Section 2: AI Engines Target (#ai-models) -->
+        <section id="ai-models" class="w-full py-20 relative z-10 bg-slate-50 border-b border-gray-200/60">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-4 text-left">
+                        <span class="px-3 py-1 rounded-full bg-purple-100 text-purple-800 text-xs font-bold uppercase tracking-wider">AI Engines</span>
+                        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Draft with Gemini, GPT-4o, Claude & Llama</h2>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Configure your favorite LLM provider in Settings with your API key, or use the built-in offline smart generator. Select tone preferences (Professional, Persuasive, Short, Casual) and refine email drafts with one click.
+                        </p>
+                        <a href="{% url 'users:settings' %}" class="btn-primary inline-flex">Configure AI Models →</a>
+                    </div>
+                    <div class="p-6 rounded-3xl bg-white border border-gray-200/80 shadow-xl space-y-3">
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs">
+                            <span class="font-bold text-purple-900">Google Gemini 1.5 Flash</span>
+                            <span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-semibold">Active</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs">
+                            <span class="font-bold text-gray-900">OpenAI GPT-4o</span>
+                            <span class="px-2 py-0.5 rounded bg-gray-200 text-gray-700 font-semibold">Supported</span>
+                        </div>
+                        <div class="flex items-center justify-between p-3 rounded-xl bg-gray-50 border border-gray-100 text-xs">
+                            <span class="font-bold text-gray-900">Anthropic Claude 3.5 Sonnet</span>
+                            <span class="px-2 py-0.5 rounded bg-gray-200 text-gray-700 font-semibold">Supported</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Section 3: Voice Suite Target (#voice-suite) -->
+        <section id="voice-suite" class="w-full py-20 relative z-10 bg-white border-b border-gray-200/60">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="p-6 rounded-3xl bg-rose-50/50 border border-rose-100 shadow-xl space-y-4 text-left">
+                        <div class="p-3 rounded-xl bg-white border border-rose-200 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-full bg-rose-600 animate-ping"></span>
+                                <span class="text-xs font-bold text-rose-900">Live Speech-to-Text Dictation</span>
+                            </div>
+                            <span class="text-[10px] font-bold text-rose-600">CONTINUOUS</span>
+                        </div>
+                        <div class="p-3 rounded-xl bg-white border border-indigo-200 flex items-center justify-between">
+                            <span class="text-xs font-bold text-indigo-900">Audio Voice Note Attachment</span>
+                            <span class="text-[10px] font-bold text-indigo-600">.WEBM / .WAV</span>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4 text-left">
+                        <span class="px-3 py-1 rounded-full bg-rose-100 text-rose-800 text-xs font-bold uppercase tracking-wider">Voice Suite</span>
+                        <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Continuous Voice Dictation & Audio Notes</h2>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            Dictate emails hands-free with auto-restarting speech-to-text and real-time live preview. Record microphone audio notes and attach them directly to outgoing email messages.
+                        </p>
+                        <a href="{% url 'mailapp:inbox' %}" class="btn-primary inline-flex">Try Voice Suite →</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature Section 4: Custom SMTP Target (#smtp-security) -->
+        <section id="smtp-security" class="w-full py-20 relative z-10 bg-slate-50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="max-w-3xl mx-auto text-center space-y-4">
+                    <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-bold uppercase tracking-wider">Custom SMTP</span>
+                    <h2 class="text-3xl font-extrabold text-gray-900 tracking-tight">Send Directly From Your Own Email Address</h2>
+                    <p class="text-sm text-gray-600 leading-relaxed">
+                        Configure custom SMTP host, port, TLS, username, and password in your Settings. Use the built-in ⚡ Test Connection tool to verify credentials before sending emails live.
+                    </p>
+                    <div class="pt-2 flex justify-center gap-3">
+                        <a href="{% url 'users:settings' %}" class="btn-primary">Open SMTP Settings →</a>
+                        <a href="{% url 'users:test_smtp' %}" class="btn-secondary">Test Connection</a>
                     </div>
                 </div>
             </div>
@@ -238,6 +312,7 @@
                 <span>© 2026. All rights reserved.</span>
             </div>
             <div class="flex items-center gap-4">
+                <a href="{% url 'mailapp:landing' %}" class="hover:text-gray-900">Home</a>
                 <a href="{% url 'mailapp:inbox' %}" class="hover:text-gray-900">Open Dashboard</a>
                 <a href="{% url 'users:settings' %}" class="hover:text-gray-900">Settings</a>
             </div>
